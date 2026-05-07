@@ -67,7 +67,7 @@ def minimum_mathing_distance(sample_pcs, ref_pcs, batch_size, normalize=True, se
             print(i)
 
         for sample_chunk in iterate_in_chunks(sample_pcs, batch_size):
-            feed_dict = {ref_pl: np.expand_dims(ref_pcs[i], 0), sample_pl: sample_chunk}
+            feed_dict = {: np.expand_dims(ref_pcs[i], 0), sample_pl: sample_chunk}
             b = sess.run(best_in_batch, feed_dict=feed_dict)
             best_in_all_batches.append(b)
         matched_dists.append(np.min(best_in_all_batches))

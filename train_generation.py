@@ -533,7 +533,7 @@ def get_dataloader(opt, train_dataset, test_dataset=None):
 
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=opt.bs,sampler=train_sampler,
                                                    shuffle=train_sampler is None, num_workers=int(opt.workers), drop_last=True)
-
+    print("--------------------- Batch size: ", opt.bs)
     if test_dataset is not None:
         test_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=opt.bs,sampler=test_sampler,
                                                    shuffle=False, num_workers=int(opt.workers), drop_last=False)
@@ -748,7 +748,9 @@ def train(gpu, opt, output_dir, noises_init):
                 model.load_state_dict(
                     torch.load('%s/epoch_%d.pth' % (output_dir, epoch), map_location=map_location)['model_state'])
 
-    dist.destroy_process_group()
+    if torch.distributed.is_initialized():
+        torch.distributed.destroy_process_group()
+    #dist.destroy_process_group()
 
 def main():
     opt = parse_args()
@@ -781,10 +783,10 @@ def main():
 def parse_args():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataroot', default='ShapeNetCore.v2.PC15k/')
+    parser.add_argument('--dataroot', default='ShapeNetCore.v4.PC15k/')
     parser.add_argument('--category', default='chair')
 
-    parser.add_argument('--bs', type=int, default=64, help='input batch size')
+    parser.add_argument('--bs', type=int, default=32, help='input batch size') # default=64
     parser.add_argument('--workers', type=int, default=16, help='workers')
     parser.add_argument('--niter', type=int, default=10000, help='number of epochs to train for')
 

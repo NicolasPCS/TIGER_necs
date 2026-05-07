@@ -8,3 +8,6 @@ __pycache__
 *.npz
 eval_model
 eval_data
+
+metrics/*
+ShapeNetCore.v2.PC15k/*

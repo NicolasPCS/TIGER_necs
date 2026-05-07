@@ -516,8 +516,17 @@ def main(opt):
         logger.info("Resume Path:%s" % opt.model)
 
         resumed_param = torch.load(opt.model)
-        model.load_state_dict(resumed_param['model_state'])
+        model.load_state_dict(resumed_param['model_state'], strict=False) # , strict=False
+        
+        """ missing, unexpected = model.load_state_dict(resumed_param['model_state'])
 
+        print("🔍 Missing keys:")
+        for key in missing:
+            print("  ", key)
+
+        print("🔍 Unexpected keys:")
+        for key in unexpected:
+            print("  ", key) """
 
         ref = None
         if opt.generate:
@@ -533,15 +542,15 @@ def main(opt):
 def parse_args():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataroot', default='ShapeNetCore.v2.PC15k/')
+    parser.add_argument('--dataroot', default='ShapeNetCore.v4.PC15k/')
     parser.add_argument('--category', default='chair')
 
     parser.add_argument('--batch_size', type=int, default=50, help='input batch size')
     parser.add_argument('--workers', type=int, default=16, help='workers')
     parser.add_argument('--niter', type=int, default=10000, help='number of epochs to train for')
 
-    parser.add_argument('--generate',default=True)
-    parser.add_argument('--eval_gen', default=True)
+    parser.add_argument('--generate', action='store_true', help='If set, generate samples')
+    parser.add_argument('--eval_gen', action='store_true', help='If set, evaluate generated samples')
 
     parser.add_argument('--nc', default=3)
     parser.add_argument('--npoints', default=2048)
@@ -553,6 +562,7 @@ def parse_args():
 
     #params
     parser.add_argument('--attention', default=True)
+    #parser.add_argument('--attention', action='store_true', help='Use attention module') # Added by Nicolás
     parser.add_argument('--dropout', default=0.1)
     parser.add_argument('--embed_dim', type=int, default=64)
     parser.add_argument('--loss_type', default='mse')
